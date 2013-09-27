@@ -1,8 +1,8 @@
 ; @module Json
-; @author Jeff Ober <jeffober@gmail.com>, Kanen Flowers <kanendosei@gmail.com>
-; @version 2.1
-; @location https://raw.github.com/kanendosei/artful-newlisp/master/json.lsp
-; @package  https://raw.github.com/kanendosei/artful-newlisp/master/json.qwerty
+; @author Jeff Ober <jeffober@gmail.com>, Kanen Flowers <kanendosei@gmail.com>, Ivan Ribeiro <ivan.ribeiro@gmail.com>
+; @version 2.2
+; @location https://github.com/irr/artful-newlisp/raw/master/json.lsp
+; @package  https://github.com/irr/artful-newlisp/raw/master/json.qwerty
 ; @description JSON parser and encoder
 ; <p>Library for parsing JSON data and serializing lisp into JSON.</p>
 ;
@@ -16,21 +16,21 @@
 ; converted into JSON arrays.</p>
 ; @example
 ; (Json:Lisp->Json '((a 1) (b 2)))
-; => "{ 'A': 1, 'b': 2 }"
+; => "{ "A": 1, "b": 2 }"
 ; (Json:Lisp->Json '(1 2 3 4 5))
 ; => "[1, 2, 3, 4, 5]"
 (define (Lisp->Json lisp)
   (case (type-of lisp)
     ("boolean" (if lisp "true" "false"))
     ("quote" (Lisp->Json (eval lisp)))
-    ("symbol" (format "'%s'" (name lisp)))
-    ("string" (format "'%s'" (simple-escape lisp)))
+    ("symbol" (format "\"%s\"" (name lisp)))
+    ("string" (format "\"%s\"" (simple-escape lisp)))
     ("integer" (string lisp))
     ("float" (string lisp))
     ("list" (if (assoc? lisp)
                 (format "{ %s }"
                         (join (map (fn (pair)
-                                     (format "'%s': %s"
+                                     (format "\"%s\": %s"
                                              (if (symbol? (pair 0))
                                                  (name (pair 0))
                                                  (string (pair 0)))
@@ -41,7 +41,7 @@
     ("array" (string "[" (join (map Lisp->Json lisp) ", ") "]"))
     ("context" (let ((values '()))
                  (dotree (s lisp)
-                   (push (format "'%s': %s"
+                   (push (format "\"%s\": %s"
                                  (name s)
                                  (Lisp->Json (eval s)))
                          values -1))
@@ -50,7 +50,7 @@
 
 (define (simple-escape str)
   (replace {[\n\r]+} str {\n} 4)
-  (replace {'} str {\'} 4)
+  (replace {"} str {\"} 4)
   str)
 
 ; @syntax (Json:Json->Lisp <str-json>)
@@ -61,7 +61,7 @@
 ; @example
 ; (Json:Json->Lisp "[1, 2, 3, 4]")
 ; => (1 2 3 4)
-; (Json:Json->Lisp "{ 'x': 3, 'y': 4, 'z': [1, 2, 3] }")
+; (Json:Json->Lisp "{ "x": 3, "y": 4, "z": [1, 2, 3] }")
 ; => (("x" 3) ("y" 4) ("z" (1 2 3)))
 (define (Json->Lisp json)
   (first (lex (tokenize json))))
