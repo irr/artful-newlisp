@@ -112,7 +112,7 @@
   (mul 100 (div t t-all)))
 
 (define (report (sort-by 'calls) , c t p) ; sort-by can be 'times, 'calls, 'per-call, 'percentage
-  (set 'sort-by (name sort-by))
+  (set 'sort-by (term sort-by))
   (let ((col-1 (row-width (fn (p) p)))
         (col-2 (row-width (fn (p) (calls p))))
         (col-3 (row-width (fn (p) (times p))))

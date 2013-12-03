@@ -117,7 +117,7 @@
     ("array" (Element "value" nil (array->xmlrpc expr)))
     ("list" (Element "value" nil (list->xmlrpc expr)))
     ("context" (Element "value" nil (context->xmlrpc expr)))
-    ("symbol" (Element "value" nil (Element "string" nil (Element:encode (name expr)))))
+    ("symbol" (Element "value" nil (Element "string" nil (Element:encode (term expr)))))
     (true (Element "value" nil (Element "string" nil (Element:encode expr))))))
 
 (define (lisp->xmlrpc-params expr)

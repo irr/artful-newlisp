@@ -44,7 +44,7 @@
 ;; @param <object> any object
 ;; <p>'type-of' introspects the type of the passed argument, object, and returns a string
 ;; representation of its type.  Correctly identifies FOOP types as well, returning the
-;; string value of the first argument (by calling 'name' on the context of the list).</p>
+;; string value of the first argument (by calling 'term' on the context of the list).</p>
 ;; @example
 ;; (type-of 10) => "integer"
 ;; (type-of "hello world") => "string"
@@ -58,7 +58,7 @@
 (define (type-of:type-of x)
   (let ((type (type-of:types (& 0xf ((dump x) 1)))))
 	  (if (and (= "list" type) (context? (first x)))
-	      (name (first x))
+	      (term (first x))
 		    type)))
 
 ;; @syntax (gensym [<ctx>])
@@ -77,7 +77,7 @@
 (define _gensym:_gensym)
 
 (define (gensym:gensym (ctx MAIN) , ctx-name new-sym)
-  (setf ctx-name (name ctx))
+  (setf ctx-name (term ctx))
   (if (_gensym ctx-name)
     (begin
       (setf new-sym (string "gensym-" (_gensym ctx-name (+ 1 (_gensym ctx-name)))))
@@ -115,8 +115,8 @@
 ;; format as with the 'assoc' function, but the result is the same as the 'lookup'
 ;; function, except the multiple values are returned correctly.</p>
 ;; @example
-;; (set 'data '((name "Joe") (friends "John" "Steve")))
-;; (get-assoc (data 'name))
+;; (set 'data '((term "Joe") (friends "John" "Steve")))
+;; (get-assoc (data 'term))
 ;; => "Joe"
 ;; (get-assoc (data 'friends))
 ;; => '("John" "Steve")
@@ -166,7 +166,7 @@
 (define (keys ctx)
   (map (fn (key) (trim key "_" ""))
        (filter (fn (key) (starts-with key "_"))
-               (map name (symbols ctx)))))
+               (map term (symbols ctx)))))
 
 (global 'keys)
 
